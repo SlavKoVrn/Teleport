@@ -27,36 +27,8 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
-    ]);
-    NavBar::end();
-    ?>
+
+    <?= $this->render('menu') ?>
 
     <div class="container">
         <?= Breadcrumbs::widget([
@@ -74,6 +46,40 @@ AppAsset::register($this);
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
+
+<?php
+$css =<<<CSS
+    .pjax-loader {
+        background-color: rgba(255,255,255,0.7);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh; /* to make it responsive */
+        width: 100vw; /* to make it responsive */
+        overflow: hidden; /*to remove scrollbars */
+        z-index: 1000000 !important; /*to make it appear on topmost part of the page */
+    }
+    .pjax-loader img {
+        position: relative;
+        top:50%;
+        left:50%;
+    }
+
+CSS;
+$this->registerCss($css);
+$js =<<<JS
+    $(document).on('pjax:start',  function(event){
+        $('.pjax-loader').show();
+    });
+    $(document).on('pjax:complete',  function(event){
+        $('.pjax-loader').hide();
+    });
+JS;
+$this->registerJS($js);
+?>
+<div class="pjax-loader" style="display:none">
+    <img src="/img/loading.gif" class="img-responsive" />
+</div>
 
 <?php $this->endBody() ?>
 </body>

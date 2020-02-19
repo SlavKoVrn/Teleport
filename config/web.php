@@ -4,14 +4,49 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
-    'id' => 'basic',
+    'id' => 'Teleport',
+    'name' => 'Teleport',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'user' => [
+            'class' => dektrium\user\Module::class,
+            'controllerMap' => [
+                'security' => 'app\controllers\user\SecurityController'
+            ],
+        ],
+    ],
     'components' => [
+        'authClientCollection' => [
+            'class'   => \yii\authclient\Collection::className(),
+            'clients' => [
+                // here is the list of clients you want to use
+                'vkontakte' => [
+                    'class'        => 'dektrium\user\clients\VKontakte',
+                    'clientId'     => 'vk_client_id',
+                    'clientSecret' => 'vk_client_secret',
+                ],
+                'facebook' => [
+                    'class'        => 'dektrium\user\clients\Facebook',
+                    'clientId'     => 'facebook_client_id',
+                    'clientSecret' => 'facebook_client_secret',
+                ],
+                'google' => [
+                    'class'        => 'dektrium\user\clients\Google',
+                    'clientId'     => 'google_client_id',
+                    'clientSecret' => 'google_client_secret',
+                ],
+                'yandex' => [
+                    'class'        => 'dektrium\user\clients\Yandex',
+                    'clientId'     => 'yandex_client_id',
+                    'clientSecret' => 'yandex_client_secret'
+                ],
+            ],
+        ],
         'request' => [
             'baseUrl' => '',
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -21,7 +56,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => dektrium\user\models\User::class,
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -48,6 +83,16 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+            ],
+        ],
+        'view' => [
+            'theme' => [
+                'pathMap' => [
+                    '@app/views' => [
+                        '@dektrium/user/views'
+                    ],
+                    '@dektrium/user/views' => '@app/views/user'
+                ],
             ],
         ],
     ],
